@@ -295,15 +295,7 @@ export default function ContentPage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/*  FOOTER                                                       */}
-      {/* ============================================================ */}
-      <footer className="site-footer">
-        <Reveal>
-          <span className="footer-seal">M &amp; T</span>
-          <p className="footer-line">With love, see you there.</p>
-        </Reveal>
-      </footer>
+
 
       <style jsx>{`
         main {
