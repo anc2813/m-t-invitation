@@ -1,15 +1,10 @@
-import type { Metadata } from 'next';
-import WeddingEnvelope from './envelope/page';
-import "@/app/globals.css"  
-export const metadata: Metadata = {
-  title: 'M & T — Wedding Invitation',
-  description: 'You are cordially invited to celebrate our wedding.',
-};
+import { redirect } from 'next/navigation';
 
-export default function Home() {
-  return (
-    <main className="wedding-page">
-      <WeddingEnvelope />
-    </main>
-  );
+/**
+ * Root route — sends visitors straight into the experience.
+ * Keeps a single, clean entry point: yoursite.com/ -> /envelope
+ */
+export default function RootPage() {
+  redirect('/envelope');
+  return null;
 }
