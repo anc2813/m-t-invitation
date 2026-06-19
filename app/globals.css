@@ -1,26 +1,119 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=EB+Garamond:ital,wght@0,400;1,400&display=swap');
 @import "tailwindcss";
 
+/* ─── Tokens ─────────────────────────────────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --burgundy-deep:  #3d0012;
+  --burgundy-mid:   #5c001b;
+  --burgundy-light: #7a1f36;
+  --gold-bright:    #d4af37;
+  --gold-muted:     #b8942b;
+  --gold-pale:      #f5e6a3;
+  --cream:          #faf6ef;
+  --parchment:      #f0e8d8;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* ─── Reset / Base ───────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Cormorant Garamond', 'EB Garamond', Georgia, serif;
+  background-color: var(--burgundy-deep);
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Page ───────────────────────────────────────────────── */
+.wedding-page {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(20,0,6,0.65) 100%),
+    linear-gradient(160deg, #5c001b 0%, #3d0012 45%, #220009 100%);
+}
+
+/* ─── Corner filigrees ───────────────────────────────────── */
+.wedding-page::before,
+.wedding-page::after {
+  content: '';
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  border-color: rgba(212, 175, 55, 0.18);
+  border-style: solid;
+  pointer-events: none;
+}
+.wedding-page::before {
+  top: 24px;
+  left: 24px;
+  border-width: 1px 0 0 1px;
+}
+.wedding-page::after {
+  bottom: 24px;
+  right: 24px;
+  border-width: 0 1px 1px 0;
+}
+
+/* ─── Gold shimmer ───────────────────────────────────────── */
+@keyframes goldShimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.gold-shimmer-text {
+  background: linear-gradient(
+    90deg,
+    var(--gold-muted) 0%,
+    var(--gold-pale)  40%,
+    var(--gold-muted) 60%,
+    var(--gold-bright) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 3.5s linear infinite;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── Mobile ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .wedding-page::before {
+    width: 80px;
+    height: 80px;
+    top: 14px;
+    left: 14px;
+  }
+  .wedding-page::after {
+    width: 80px;
+    height: 80px;
+    bottom: 14px;
+    right: 14px;
+  }
 }
