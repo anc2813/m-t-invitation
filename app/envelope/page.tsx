@@ -115,7 +115,7 @@ export default function EnvelopePage() {
         style={{
           position: 'fixed',
           inset: 0,
-          backgroundColor: '#b68386',
+          backgroundColor: '#ecdbdc',
           opacity: isLeaving ? 1 : 0,
           transition: 'opacity 1s cubic-bezier(0.22, 1, 0.36, 1)',
           pointerEvents: isLeaving ? 'all' : 'none',
