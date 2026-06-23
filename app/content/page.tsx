@@ -475,7 +475,7 @@ export default function ContentPage() {
 <section
   id="story"
   style={{
-    backgroundImage: "url('/media/withlove.webp')",
+    backgroundImage: "url('/media/withlove.png')",
     backgroundSize: 'cover',
     backgroundPosition: 'center top',
     backgroundRepeat: 'no-repeat',
