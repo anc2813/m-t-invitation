@@ -601,48 +601,68 @@ export default function ContentPage() {
       {/* ============================================================ */}
 <section
   id="story"
-  className="story-section"
   style={{
-   backgroundImage: "url('/media/withlove.webp')",
+    backgroundImage: "url('/media/withlove.webp')",
     backgroundSize: 'cover',
     backgroundPosition: 'center top',
     backgroundRepeat: 'no-repeat',
     minHeight: '100vh',
-    padding: 'clamp(120px, 18vh, 180px) clamp(20px, 8vw, 64px) clamp(80px, 12vh, 140px)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
-   
+    padding: '0',
   }}
 >
-<div style={{ height: '80px' }} />
-  <Reveal as="p" className="eyebrow" >
-    With love
-  </Reveal>
+  {/* Spacer that pushes content below the wax seal — ~42% of the image height */}
+  <div style={{ height: '42vh', minHeight: '280px', flexShrink: 0 }} />
 
-  <Reveal >
-    <div>
-      <p >
-        John Green once wrote, "What the hell is instant? Nothing is instant.
-        Instant rice takes five minutes; instant pudding, an hour."
+  {/* Content sits on the paper area */}
+  <div style={{
+    width: '100%',
+    maxWidth: '560px',
+    padding: '0 clamp(32px, 8vw, 80px) clamp(80px, 12vh, 140px)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+  }}>
+    <Reveal as="p" style={{
+      fontFamily: "'Arial', sans-serif",
+      fontSize: '11px',
+      letterSpacing: '0.28em',
+      textTransform: 'uppercase',
+      color: '#b8782a',
+      margin: '0 0 24px',
+    }}>
+      With love
+    </Reveal>
 
-        And perhaps nowhere is this truer than in love.
-
-        For love asks us to surrender the instant in favor of the journey: to
-        choose patience over haste, perseverance over ease, and selflessness
-        over certainty. It is in taking the longer road, through every trial
-        and every season of waiting, that the heart is refined and the soul
-        finds its way home.
-
-        Through every hurdle, every whispered prayer, and every moment spent
-        holding on to hope, our hearts found their way back to one another.
-
-        And now, at last, surrounded by our family, friends, and countless
-        blessings, we invite you to share in the joy as we celebrate the
-        beginning of our forever.
+    <Reveal delay={120}>
+      <p style={{
+        fontFamily: "Georgia, 'Times New Roman', serif",
+        fontStyle: 'italic',
+        fontSize: 'clamp(15px, 2vw, 17px)',
+        lineHeight: 2,
+        color: '#3a2010',
+        margin: 0,
+      }}>
+        John Green once wrote, &ldquo;What the hell is instant? Nothing is instant.
+        Instant rice takes five minutes; instant pudding, an hour.&rdquo;
+        <br /><br />
+        And perhaps nowhere is this truer than in love. For love asks us to surrender
+        the instant in favor of the journey — to choose patience over haste,
+        perseverance over ease, and selflessness over certainty. It is in taking the
+        longer road, through every trial and every season of waiting, that the heart
+        is refined and the soul finds its way home.
+        <br /><br />
+        Through every hurdle, every whispered prayer, and every moment spent holding
+        on to hope, our hearts found their way back to one another.
+        <br /><br />
+        And now, at last, surrounded by our family, friends, and countless blessings,
+        we invite you to share in the joy as we celebrate the beginning of our forever.
       </p>
-    </div>
-  </Reveal>
+    </Reveal>
+  </div>
 </section>
 
 
