@@ -641,14 +641,13 @@ export default function ContentPage() {
       <p style={{
         fontFamily: "Georgia, 'Times New Roman', serif",
         fontStyle: 'italic',
-        fontSize: 'clamp(15px, 2vw, 17px)',
+        fontSize: 'clamp(14px, 2vw, 17px)',
         lineHeight: 2,
         color: '#3a2010',
         margin: 0,
       }}>
         John Green once wrote, &ldquo;What the hell is instant? Nothing is instant.
         Instant rice takes five minutes; instant pudding, an hour.&rdquo;
-        <br /><br />
         And perhaps nowhere is this truer than in love. For love asks us to surrender
         the instant in favor of the journey — to choose patience over haste,
         perseverance over ease, and selflessness over certainty. It is in taking the
