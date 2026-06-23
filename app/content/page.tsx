@@ -501,11 +501,11 @@ export default function ContentPage() {
   }}>
     <Reveal as="p" style={{
       fontFamily: "'Arial', sans-serif",
-      fontSize: '15px',
+      fontSize: '28px',
       letterSpacing: '0.28em',
       textTransform: 'uppercase',
       color: '#b8782a',
-      margin: '0 0 18px',
+      margin: '0 0 10px',
     }}>
       With love
     </Reveal>
