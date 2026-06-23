@@ -290,121 +290,7 @@ function GuestBook() {
 }
 
 
-/* ------------------------------------------------------------------ */
-/*  PetalGame                                                          */
-/* ------------------------------------------------------------------ */
-function PetalGame() {
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const [hintVisible, setHintVisible] = useState(true);
 
-  const flowers = ['🌸','💗', '🌼','💕' ,'🏵️', '💛'];
-
-  function spawnPetals() {
-    const wrap = wrapRef.current;
-    if (!wrap) return;
-    setHintVisible(false);
-
-    const count = 30 + Math.floor(Math.random() * 20);
-    for (let i = 0; i < count; i++) {
-      setTimeout(() => {
-        const p = document.createElement('div');
-        const size = 20 + Math.random() * 20;
-        const startX = Math.random() * 100;
-        const flower = flowers[Math.floor(Math.random() * flowers.length)];
-        const duration = 2.5 + Math.random() * 2;
-        const swayX = (Math.random() - 0.5) * 200;
-        p.style.cssText = `
-          position:absolute;
-          left:${startX}%;
-          top:-30px;
-          font-size:${size}px;
-          line-height:1;
-          pointer-events:none;
-          z-index:10;
-          opacity:0.95;
-          animation: petalRain ${duration}s ease-in forwards;
-          --sway: ${swayX}px;
-          user-select:none;
-        `;
-        p.textContent = flower;
-        wrap.appendChild(p);
-        setTimeout(() => p.remove(), duration * 1000 + 100);
-      }, i * 40);
-    }
-  }
-
-  function handleClick() { spawnPetals(); }
-
-  function handleTouch(e: React.TouchEvent<HTMLDivElement>) {
-    e.preventDefault();
-    spawnPetals();
-  }
-
-  return (
-    <>
-      <style jsx>{`
-        @keyframes petalRain {
-          0% {
-            transform: translateY(0) translateX(0) rotate(0deg);
-            opacity: 0.95;
-          }
-          50% {
-            transform: translateY(240px) translateX(calc(var(--sway) * 0.5)) rotate(180deg);
-            opacity: 0.85;
-          }
-          100% {
-            transform: translateY(560px) translateX(var(--sway)) rotate(360deg);
-            opacity: 0;
-          }
-        }
-      `}</style>
-
-      <div
-        ref={wrapRef}
-        onClick={handleClick}
-        onTouchStart={handleTouch}
-        style={{
-          position: 'relative',
-          width: '100%',
-          height: '520px',
-          overflow: 'hidden',
-          cursor: 'pointer',
-          userSelect: 'none',
-          background: 'transparent',
-        }}
-      >
-        <Image
-          src="/media/bandg.webp"
-          alt="Mohamed and Tibyan"
-          fill
-          style={{
-            objectFit: 'contain',
-            objectPosition: 'center bottom',
-            zIndex: 2,
-          }}
-        />
-
-         
-          <p style={{
-            position: 'absolute',
-            top: '16px',
-            left: 0, right: 0,
-            textAlign: 'center',
-            fontFamily: 'Georgia, serif',
-            fontStyle: 'italic',
-            fontSize: '15px',
-            color: 'rgba(255,207,107,0.85)',
-            margin: 0,
-            zIndex: 10,
-            pointerEvents: 'none',
-          }}>
-            🌼🌼🌼🌼
-          </p>
-        
-      </div>
-    </>
-  );
-}
 
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
@@ -505,26 +391,13 @@ export default function ContentPage() {
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontStyle: 'italic',
                 fontWeight: 500,
-                fontSize: 'clamp(25px, 4vw, 32px)',
+                fontSize: 'clamp(22px, 4vw, 32px)',
                 color: '#ffffff',
                 margin: '0 0 4px',
                 lineHeight: 1.25,
               }}
             >
-              Mohamed Abdelrahman
-            </h1>
-            <h1
-              style={{
-                fontFamily: "Georgia, 'Times New Roman', serif",
-                fontStyle: 'italic',
-                fontWeight: 500,
-                fontSize: 'clamp(25px, 4vw, 32px)',
-                color: '#ffffff',
-                margin: '0 0 8px',
-                lineHeight: 1.25,
-              }}
-            >
-              Mohammed Hassanein
+              Mohamed Abdelrahman Mohamed 
             </h1>
 
             {/* Ampersand */}
@@ -546,7 +419,7 @@ export default function ContentPage() {
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontStyle: 'italic',
                 fontWeight: 500,
-                fontSize: 'clamp(25px, 4vw, 32px)',
+                fontSize: 'clamp(22px, 4vw, 32px)',
                 color: '#ffffff',
                 margin: '0 0 clamp(16px, 4%, 28px)',
                 lineHeight: 1.25,
@@ -874,23 +747,6 @@ export default function ContentPage() {
 
 
 
-{/* ============================================================ */}
-{/*  PETAL GAME                                                   */}
-{/* ============================================================ */}
-<section id="game" style={{
-  background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
-  padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-}}>
-  <Reveal as="h2" delay={80} className="section-title section-title-light">
-    Shower them with love
-  </Reveal>
-  <Reveal delay={140} style={{ width: '100%', maxWidth: '420px' }}>
-    <PetalGame />
-  </Reveal>
-</section>
 
 
 
