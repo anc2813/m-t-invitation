@@ -463,7 +463,7 @@ export default function ContentPage() {
                 margin: 0,
               }}
             >
-              Waldorf Astoria
+              Waldorf Astoria Hotel
             </p>
           </div>
         </div>
@@ -522,7 +522,7 @@ export default function ContentPage() {
         John Green once wrote, &ldquo;What the hell is instant? Nothing is instant.
         Instant rice takes five minutes; instant pudding, an hour.&rdquo;
         And perhaps nowhere is this truer than in love. For love asks us to surrender
-        the instant in favor of the journey — to choose patience over haste,
+        the instant in favor of the journey  to choose patience over haste,
         perseverance over ease, and selflessness over certainty. It is in taking the
         longer road, through every trial and every season of waiting, that the heart
         is refined and the soul finds its way home.
@@ -573,7 +573,7 @@ export default function ContentPage() {
             margin: '0 0 6px',
             textAlign: 'center',
           }}>
-            Waldorf Astoria
+            Waldorf Astoria Hotel
           </p>
           <p style={{
             fontFamily: "'Arial', sans-serif",
