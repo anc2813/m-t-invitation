@@ -692,10 +692,10 @@ export default function ContentPage() {
           <br></br>
           </Reveal>
     
-      
-        <Reveal delay={160} style={{ width: '100%', maxWidth: '600px' }}>
+      <section  style={{ width: '100%', maxWidth: '600px' }}>
+        <Reveal delay={160}>
           <GuestBook />
-        </Reveal>
+        </Reveal></section>
       </section>
 
       {/*  
