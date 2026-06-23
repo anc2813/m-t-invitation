@@ -659,8 +659,7 @@ export default function ContentPage() {
       <section id="timeline" className="story-section">
         <Reveal as="p" className="eyebrow">the evening</Reveal>
         <Reveal as="h2" delay={80} className="section-title">
-          How the night unfolds
-        </Reveal>
+Schedule        </Reveal>
 
         <div className="timeline">
           <div className="timeline-rail" aria-hidden="true" />
