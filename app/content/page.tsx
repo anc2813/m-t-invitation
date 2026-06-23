@@ -391,13 +391,13 @@ export default function ContentPage() {
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontStyle: 'italic',
                 fontWeight: 500,
-                fontSize: 'clamp(22px, 4vw, 32px)',
+                fontSize: 'clamp(26px, 4vw, 32px)',
                 color: '#ffffff',
                 margin: '0 0 4px',
                 lineHeight: 1.25,
               }}
             >
-              Mohamed Abdelrahman Mohamed 
+              Mohamed Abdelrahman
             </h1>
 
             {/* Ampersand */}
@@ -419,13 +419,13 @@ export default function ContentPage() {
                 fontFamily: "Georgia, 'Times New Roman', serif",
                 fontStyle: 'italic',
                 fontWeight: 500,
-                fontSize: 'clamp(22px, 4vw, 32px)',
+                fontSize: 'clamp(26px, 4vw, 32px)',
                 color: '#ffffff',
                 margin: '0 0 clamp(16px, 4%, 28px)',
                 lineHeight: 1.25,
               }}
             >
-              Tibyan Elsheikh Mustafa
+              Tibyan Elsheikh 
             </h1>
 
             {/* Thin divider */}
@@ -487,12 +487,12 @@ export default function ContentPage() {
   }}
 >
   {/* Spacer that pushes content below the wax seal — ~42% of the image height */}
-  <div style={{ height: '42vh', minHeight: '280px', flexShrink: 0 }} />
+  <div style={{ height: '20vh', minHeight: '100px', flexShrink: 0 }} />
 
   {/* Content sits on the paper area */}
   <div style={{
     width: '100%',
-    maxWidth: '560px',
+    maxWidth: '460px',
     padding: '0 clamp(32px, 8vw, 80px) clamp(80px, 12vh, 140px)',
     display: 'flex',
     flexDirection: 'column',
@@ -501,11 +501,11 @@ export default function ContentPage() {
   }}>
     <Reveal as="p" style={{
       fontFamily: "'Arial', sans-serif",
-      fontSize: '28px',
+      fontSize: '26px',
       letterSpacing: '0.28em',
       textTransform: 'uppercase',
       color: '#b8782a',
-      margin: '0 0 10px',
+      margin: '0 0 15px',
     }}>
       With love
     </Reveal>
