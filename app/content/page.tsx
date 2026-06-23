@@ -297,7 +297,7 @@ function PetalGame() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const [hintVisible, setHintVisible] = useState(true);
 
-  const flowers = ['🌸', '🌼', '🏵️'];
+  const flowers = ['🌸','💗', '🌼','💕' ,'🏵️', '💛'];
 
   function spawnPetals() {
     const wrap = wrapRef.current;
