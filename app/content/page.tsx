@@ -49,16 +49,17 @@ interface RevealProps {
   as?: ElementType;
   delay?: number;
   className?: string;
+  style?: React.CSSProperties;  // ← add this
   children: ReactNode;
 }
 
-function Reveal({ as: Tag = 'div', delay = 0, className = '', children }: RevealProps) {
+function Reveal({ as: Tag = 'div', delay = 0, className = '', style, children }: RevealProps) {
   const { ref, inView } = useReveal<HTMLElement>();
   return (
     <Tag
       ref={ref as never}
       className={`reveal ${inView ? 'reveal-in' : ''} ${className}`}
-      style={{ transitionDelay: inView ? `${delay}ms` : '0ms' }}
+      style={{ transitionDelay: inView ? `${delay}ms` : '0ms', ...style }}  // ← spread style
     >
       {children}
       <style jsx>{`
@@ -288,6 +289,123 @@ function GuestBook() {
   );
 }
 
+
+/* ------------------------------------------------------------------ */
+/*  PetalGame                                                          */
+/* ------------------------------------------------------------------ */
+function PetalGame() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [hintVisible, setHintVisible] = useState(true);
+
+  const flowers = ['🌸', '🌹', '🌼', '🍀', '🏵️', '🌺', '💐', '🌷'];
+
+  function spawnPetals() {
+    const wrap = wrapRef.current;
+    if (!wrap) return;
+    setHintVisible(false);
+
+    const count = 30 + Math.floor(Math.random() * 20);
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const p = document.createElement('div');
+        const size = 20 + Math.random() * 20;
+        const startX = Math.random() * 100;
+        const flower = flowers[Math.floor(Math.random() * flowers.length)];
+        const duration = 2.5 + Math.random() * 2;
+        const swayX = (Math.random() - 0.5) * 200;
+        p.style.cssText = `
+          position:absolute;
+          left:${startX}%;
+          top:-30px;
+          font-size:${size}px;
+          line-height:1;
+          pointer-events:none;
+          z-index:10;
+          opacity:0.95;
+          animation: petalRain ${duration}s ease-in forwards;
+          --sway: ${swayX}px;
+          user-select:none;
+        `;
+        p.textContent = flower;
+        wrap.appendChild(p);
+        setTimeout(() => p.remove(), duration * 1000 + 100);
+      }, i * 40);
+    }
+  }
+
+  function handleClick() { spawnPetals(); }
+
+  function handleTouch(e: React.TouchEvent<HTMLDivElement>) {
+    e.preventDefault();
+    spawnPetals();
+  }
+
+  return (
+    <>
+      <style jsx>{`
+        @keyframes petalRain {
+          0% {
+            transform: translateY(0) translateX(0) rotate(0deg);
+            opacity: 0.95;
+          }
+          50% {
+            transform: translateY(240px) translateX(calc(var(--sway) * 0.5)) rotate(180deg);
+            opacity: 0.85;
+          }
+          100% {
+            transform: translateY(560px) translateX(var(--sway)) rotate(360deg);
+            opacity: 0;
+          }
+        }
+      `}</style>
+
+      <div
+        ref={wrapRef}
+        onClick={handleClick}
+        onTouchStart={handleTouch}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: '520px',
+          overflow: 'hidden',
+          cursor: 'pointer',
+          userSelect: 'none',
+          background: 'transparent',
+        }}
+      >
+        <Image
+          src="/media/bandg.webp"
+          alt="Mohamed and Tibyan"
+          fill
+          style={{
+            objectFit: 'contain',
+            objectPosition: 'center bottom',
+            zIndex: 2,
+          }}
+        />
+
+         
+          <p style={{
+            position: 'absolute',
+            top: '16px',
+            left: 0, right: 0,
+            textAlign: 'center',
+            fontFamily: 'Georgia, serif',
+            fontStyle: 'italic',
+            fontSize: '15px',
+            color: 'rgba(255,207,107,0.85)',
+            margin: 0,
+            zIndex: 10,
+            pointerEvents: 'none',
+          }}>
+            🏵️ 🍀🌼🌸🌹
+          </p>
+        
+      </div>
+    </>
+  );
+}
+
 /* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
@@ -300,6 +418,11 @@ export default function ContentPage() {
     const timer = setTimeout(() => setShowMessage(true), 350);
     return () => clearTimeout(timer);
   }, [backgroundLoaded]);
+
+
+
+
+ 
 
   return (
     <main aria-label="Mariam & Tarek's wedding invitation">
@@ -476,72 +599,53 @@ export default function ContentPage() {
       {/* ============================================================ */}
       {/*  OUR STORY                                                    */}
       {/* ============================================================ */}
-      <section id="story" className="story-section">
-        <Reveal as="p" className="eyebrow">our story</Reveal>
+<section
+  id="story"
+  className="story-section"
+  style={{
+   backgroundImage: "url('/media/withlove.webp')",
+    backgroundSize: 'cover',
+    backgroundPosition: 'center top',
+    backgroundRepeat: 'no-repeat',
+    minHeight: '100vh',
+    padding: 'clamp(120px, 18vh, 180px) clamp(20px, 8vw, 64px) clamp(80px, 12vh, 140px)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+   
+  }}
+>
+<div style={{ height: '80px' }} />
+  <Reveal as="p" className="eyebrow" >
+    With love
+  </Reveal>
 
-        <Reveal as="div" delay={120} className="timeline-item">
-          <div>
-            <p>
-              John Green once wrote, What the hell is instant? Nothing is instant. Instant rice takes five minutes; instant pudding, an hour.
+  <Reveal >
+    <div>
+      <p >
+        John Green once wrote, "What the hell is instant? Nothing is instant.
+        Instant rice takes five minutes; instant pudding, an hour."
 
-              And perhaps nowhere is this truer than in love.
+        And perhaps nowhere is this truer than in love.
 
-              For love asks us to surrender the instant in favor of the journey: to choose patience over haste, perseverance over ease, and selflessness over certainty. It is in taking the longer road, through every trial and every season of waiting, that the heart is refined and the soul finds its way home.
+        For love asks us to surrender the instant in favor of the journey: to
+        choose patience over haste, perseverance over ease, and selflessness
+        over certainty. It is in taking the longer road, through every trial
+        and every season of waiting, that the heart is refined and the soul
+        finds its way home.
 
-              Through every hurdle, every whispered prayer, and every moment spent holding on to hope, our hearts found their way back to one another.
+        Through every hurdle, every whispered prayer, and every moment spent
+        holding on to hope, our hearts found their way back to one another.
 
-              And now, at last, surrounded by our family, friends, and countless blessings, we invite you to share in the joy as we celebrate the beginning of our forever.
-            </p>
-          </div>
-        </Reveal>
-      </section>
+        And now, at last, surrounded by our family, friends, and countless
+        blessings, we invite you to share in the joy as we celebrate the
+        beginning of our forever.
+      </p>
+    </div>
+  </Reveal>
+</section>
 
-      {/* ============================================================ */}
-      {/*  PARALLAX DIVIDER                                             */}
-      {/* ============================================================ */}
-      <div className="parallax-divider" aria-hidden="true">
-        <div
-          style={{
-            backgroundImage: "url('/media/roses.webp')",
-            backgroundAttachment: 'fixed',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            width: '100%',
-            height: '100%',
-          }}
-        />
-        <div className="parallax-overlay" />
-      </div>
 
-      {/* ============================================================ */}
-      {/*  COUNTDOWN                                                    */}
-      {/* ============================================================ */}
-      <section id="countdown" style={{
-        background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
-        padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        textAlign: 'center',
-      }}>
-        <section style={{
-          fontFamily: 'Georgia, serif',
-          fontStyle: 'italic',
-          fontSize: '14px',
-          color: '#fbf7f2',
-          lineHeight: 1,
-        }}>
-          <Reveal as="h2" delay={80}>
-            After all this time — always
-          </Reveal>
-          <br />
-        </section>
-
-        <Reveal delay={160}>
-          <CountdownTimer />
-        </Reveal>
-      </section>
 
       {/* ============================================================ */}
       {/*  PARALLAX DIVIDER                                             */}
@@ -608,6 +712,57 @@ export default function ContentPage() {
         </Reveal>
       </section>
 
+
+      {/* ============================================================ */}
+      {/*  PARALLAX DIVIDER                                             */}
+      {/* ============================================================ */}
+      <div className="parallax-divider" aria-hidden="true">
+        <div
+          style={{
+            backgroundImage: "url('/media/roses.webp')",
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '100%',
+            height: '100%',
+          }}
+        />
+        <div className="parallax-overlay" />
+      </div>
+
+
+      {/* ============================================================ */}
+      {/*  COUNTDOWN                                                    */}
+      {/* ============================================================ */}
+      <section id="countdown" style={{
+        background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
+        padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+        <section style={{
+          fontFamily: 'Georgia, serif',
+          fontStyle: 'italic',
+          fontSize: '14px',
+          color: '#fbf7f2',
+          lineHeight: 1,
+        }}>
+          <Reveal as="h2" delay={80}>
+            After all this time — always
+          </Reveal>
+          <br />
+        </section>
+
+        <Reveal delay={160}>
+          <CountdownTimer />
+        </Reveal>
+      </section>
+
+
+
       {/* ============================================================ */}
       {/*  WEDDING TIMELINE                                             */}
       {/* ============================================================ */}
@@ -630,17 +785,18 @@ export default function ContentPage() {
             <Reveal key={num} as="div" delay={120 + i * 80} className="timeline-item">
               <span className="timeline-num">{num}</span>
               <div>
-                <h3>{event}</h3>
-                <p style={{ marginBottom: '4px' }}>{desc}</p>
-                <p style={{
+                   <p style={{
                   fontFamily: 'Georgia, serif',
                   fontStyle: 'italic',
-                  fontSize: '13px',
+                  fontSize: '16px',
                   color: '#b8782a',
                   margin: 0,
                 }}>
                   {time}
                 </p>
+                <h3>{event}</h3>
+                <p style={{ marginBottom: '4px' }}>{desc}</p>
+             
               </div>
             </Reveal>
           ))}
@@ -698,7 +854,34 @@ export default function ContentPage() {
         </Reveal></section>
       </section>
 
+
+
+
+{/* ============================================================ */}
+{/*  PETAL GAME                                                   */}
+{/* ============================================================ */}
+<section id="game" style={{
+  background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
+  padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+}}>
+  <Reveal as="h2" delay={80} className="section-title section-title-light">
+    Shower them with love
+  </Reveal>
+  <Reveal delay={140} style={{ width: '100%', maxWidth: '420px' }}>
+    <PetalGame />
+  </Reveal>
+</section>
+
+
+
+
+
       {/*  
+      
+
       
       <section id="details" className="details-section">
         <Reveal as="p" className="eyebrow">the details</Reveal>
