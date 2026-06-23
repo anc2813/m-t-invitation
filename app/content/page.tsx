@@ -1,5 +1,5 @@
 'use client';
-
+import "./content.css"
 import Image from 'next/image';
 import {
   useEffect,
@@ -7,6 +7,7 @@ import {
   useState,
   type ReactNode,
   type ElementType,
+  type CSSProperties,
 } from 'react';
 
 /* ------------------------------------------------------------------ */
@@ -78,6 +79,216 @@ function Reveal({ as: Tag = 'div', delay = 0, className = '', children }: Reveal
 }
 
 /* ------------------------------------------------------------------ */
+/*  CountdownTimer — moved to top level (was nested inside ContentPage) */
+/* ------------------------------------------------------------------ */
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, mins: 0, secs: 0, done: false });
+
+  useEffect(() => {
+    const target = new Date('2026-07-04T20:00:00');
+
+    function tick() {
+      const diff = target.getTime() - Date.now();
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, mins: 0, secs: 0, done: true });
+        return;
+      }
+      setTimeLeft({
+        days: Math.floor(diff / 86400000),
+        hours: Math.floor((diff % 86400000) / 3600000),
+        mins: Math.floor((diff % 3600000) / 60000),
+        secs: Math.floor((diff % 60000) / 1000),
+        done: false,
+      });
+    }
+
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  const units = [
+    { label: 'days', value: timeLeft.days },
+    { label: 'hours', value: timeLeft.hours },
+    { label: 'minutes', value: timeLeft.mins },
+    { label: 'seconds', value: timeLeft.secs },
+  ];
+
+  if (timeLeft.done) {
+    return (
+      <p style={{
+        fontFamily: 'Georgia, serif',
+        fontStyle: 'italic',
+        fontSize: '22px',
+        color: '#ffcf6b',
+        margin: 0,
+      }}>
+        The celebration has begun!
+      </p>
+    );
+  }
+
+  return (
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: 'repeat(4, minmax(0, 1fr))',
+      gap: 'clamp(10px, 2vw, 18px)',
+      width: '100%',
+    }}>
+      {units.map(({ label, value }) => (
+        <div key={label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+          <div style={{
+            background: 'rgba(251,247,242,0.07)',
+            border: '1px solid rgba(255,207,107,0.22)',
+            borderRadius: '6px',
+            width: '100%',
+            aspectRatio: '1',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+            <span style={{
+              fontFamily: 'Georgia, serif',
+              fontStyle: 'italic',
+              fontSize: 'clamp(26px, 6vw, 48px)',
+              color: '#fbf7f2',
+              lineHeight: 1,
+            }}>
+              {String(value).padStart(2, '0')}
+            </span>
+          </div>
+          <span style={{
+            fontFamily: "'Arial', sans-serif",
+            fontSize: '10px',
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            color: 'rgba(255,207,107,0.7)',
+          }}>
+            {label}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  GuestBook — moved out of the JSX tree (was a syntax error there)   */
+/* ------------------------------------------------------------------ */
+function GuestBook() {
+  const [name, setName] = useState('');
+  const [message, setMessage] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+  const [messages, setMessages] = useState<{ name: string; message: string; time: string }[]>([]);
+
+  function handleSubmit() {
+    if (!name.trim() || !message.trim()) return;
+    const entry = {
+      name: name.trim(),
+      message: message.trim(),
+      time: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+    };
+    setMessages(prev => [entry, ...prev]);
+    setName('');
+    setMessage('');
+    setSubmitted(true);
+    setTimeout(() => setSubmitted(false), 3000);
+  }
+
+  const inputStyle: CSSProperties = {
+    width: '100%',
+    background: 'rgba(251,247,242,0.08)',
+    border: '1px solid rgba(255,207,107,0.3)',
+    borderRadius: '4px',
+    padding: '12px 16px',
+    fontFamily: "Georgia, 'Times New Roman', serif",
+    fontStyle: 'italic',
+    fontSize: '15px',
+    color: '#fbf7f2',
+    outline: 'none',
+    boxSizing: 'border-box',
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <input
+        type="text"
+        placeholder="Your name"
+        value={name}
+        onChange={e => setName(e.target.value)}
+        style={inputStyle}
+      />
+      <textarea
+        placeholder="Your message or advice..."
+        value={message}
+        onChange={e => setMessage(e.target.value)}
+        rows={4}
+        style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.65 }}
+      />
+      <button
+        onClick={handleSubmit}
+        style={{
+          fontFamily: "'Arial', sans-serif",
+          fontSize: '12px',
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: '#4d0e12',
+          background: submitted ? '#a8d5a2' : '#ffcf6b',
+          border: 'none',
+          borderRadius: '999px',
+          padding: '14px 40px',
+          cursor: 'pointer',
+          alignSelf: 'center',
+          transition: 'background 0.3s ease',
+        }}
+      >
+        {submitted ? 'Message sent ✓' : 'Leave your message'}
+      </button>
+
+      {messages.length > 0 && (
+        <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{
+            width: '40px',
+            height: '1px',
+            background: 'rgba(255,207,107,0.3)',
+            margin: '0 auto 8px',
+          }} />
+          {messages.map((m, i) => (
+            <div key={i} style={{
+              background: 'rgba(251,247,242,0.06)',
+              border: '1px solid rgba(255,207,107,0.18)',
+              borderRadius: '4px',
+              padding: '20px 24px',
+            }}>
+              <p style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                fontSize: '15px',
+                color: '#fbf7f2',
+                lineHeight: 1.7,
+                margin: '0 0 10px',
+              }}>
+                &ldquo;{m.message}&rdquo;
+              </p>
+              <p style={{
+                fontFamily: "'Arial', sans-serif",
+                fontSize: '11px',
+                letterSpacing: '0.15em',
+                textTransform: 'uppercase',
+                color: '#ffcf6b',
+                margin: 0,
+              }}>
+                {m.name} · {m.time}
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Page                                                               */
 /* ------------------------------------------------------------------ */
 export default function ContentPage() {
@@ -97,8 +308,9 @@ export default function ContentPage() {
       {/*  HERO                                                         */}
       {/* ============================================================ */}
       <section className="full-screen center-content hero" aria-label="Save the date">
+        {/* Full-bleed background */}
         <Image
-          src="/media/roses.webp"
+          src="/media/mandt1.webp"
           alt=""
           role="presentation"
           fill
@@ -122,6 +334,7 @@ export default function ContentPage() {
           }}
         />
 
+        {/* Card frame + overlaid text */}
         <div
           className="center-content"
           style={{
@@ -133,20 +346,130 @@ export default function ContentPage() {
               'opacity 1s cubic-bezier(0.22, 1, 0.36, 1), transform 1s cubic-bezier(0.22, 1, 0.36, 1)',
           }}
         >
-          <Image
-            src="/media/message.webp"
-            alt="Mariam & Tarek — October 24, 2026"
-            width={640}
-            height={640}
-            priority
-            sizes="(max-width: 768px) 92vw, 640px"
-            style={{
-              width: '100%',
-              height: 'auto',
-              filter: 'drop-shadow(0 12px 32px rgba(0,0,0,0.35))',
-            }}
+
+          {/* Text overlay — centered inside the card */}
+          <div
             className={showMessage ? 'animate-float' : ''}
-          />
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 'clamp(24px, 8%, 56px)',
+              textAlign: 'center',
+              gap: 0,
+            }}
+          >
+            {/* "we are getting married" — eyebrow style */}
+            <p
+              style={{
+                fontFamily: "'Arial', sans-serif",
+                fontSize: 'clamp(16px, 1.4vw, 12px)',
+                letterSpacing: '0.28em',
+                textTransform: 'uppercase',
+                color: '#ffefdc',
+                margin: '0 0 clamp(12px, 3%, 20px)',
+              }}
+            >
+              we are getting married
+            </p>
+
+            {/* Name 1 */}
+            <h1
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                fontWeight: 500,
+                fontSize: 'clamp(25px, 4vw, 32px)',
+                color: '#ffffff',
+                margin: '0 0 4px',
+                lineHeight: 1.25,
+              }}
+            >
+              Mohamed Abdelrahman
+            </h1>
+            <h1
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                fontWeight: 500,
+                fontSize: 'clamp(25px, 4vw, 32px)',
+                color: '#ffffff',
+                margin: '0 0 8px',
+                lineHeight: 1.25,
+              }}
+            >
+              Mohammed Hassanein
+            </h1>
+
+            {/* Ampersand */}
+            <p
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                fontSize: 'clamp(21px, 2.5vw, 20px)',
+                color: '#ffefdc',
+                margin: '0 0 8px',
+              }}
+            >
+              &amp;
+            </p>
+
+            {/* Name 2 */}
+            <h1
+              style={{
+                fontFamily: "Georgia, 'Times New Roman', serif",
+                fontStyle: 'italic',
+                fontWeight: 500,
+                fontSize: 'clamp(25px, 4vw, 32px)',
+                color: '#ffffff',
+                margin: '0 0 clamp(16px, 4%, 28px)',
+                lineHeight: 1.25,
+              }}
+            >
+              Tibyan Elsheikh Mustafa
+            </h1>
+
+            {/* Thin divider */}
+            <div
+              style={{
+                width: '40px',
+                height: '1px',
+                background: 'rgba(184, 120, 42, 0.4)',
+                margin: '0 auto clamp(12px, 3%, 20px)',
+              }}
+            />
+
+            {/* Date — eyebrow style */}
+            <p
+              style={{
+                fontFamily: "'Arial', sans-serif",
+                fontSize: 'clamp(16px, 1.4vw, 12px)',
+                letterSpacing: '0.28em',
+                textTransform: 'uppercase',
+                color: '#ffefdc',
+                margin: '0 0 6px',
+              }}
+            >
+              04 · 07 · 2026
+            </p>
+
+            {/* Venue — eyebrow style */}
+            <p
+              style={{
+                fontFamily: "'Arial', sans-serif",
+                fontSize: 'clamp(16px, 1.4vw, 12px)',
+                letterSpacing: '0.28em',
+                textTransform: 'uppercase',
+                color: '#ffefdc',
+                margin: 0,
+              }}
+            >
+              Waldorf Astoria
+            </p>
+          </div>
         </div>
       </section>
 
@@ -155,46 +478,69 @@ export default function ContentPage() {
       {/* ============================================================ */}
       <section id="story" className="story-section">
         <Reveal as="p" className="eyebrow">our story</Reveal>
-        <Reveal as="h2" delay={80} className="section-title">
-          How it all came together
+
+        <Reveal as="div" delay={120} className="timeline-item">
+          <div>
+            <p>
+              John Green once wrote, What the hell is instant? Nothing is instant. Instant rice takes five minutes; instant pudding, an hour.
+
+              And perhaps nowhere is this truer than in love.
+
+              For love asks us to surrender the instant in favor of the journey: to choose patience over haste, perseverance over ease, and selflessness over certainty. It is in taking the longer road, through every trial and every season of waiting, that the heart is refined and the soul finds its way home.
+
+              Through every hurdle, every whispered prayer, and every moment spent holding on to hope, our hearts found their way back to one another.
+
+              And now, at last, surrounded by our family, friends, and countless blessings, we invite you to share in the joy as we celebrate the beginning of our forever.
+            </p>
+          </div>
         </Reveal>
+      </section>
 
-        <div className="timeline">
-          <div className="timeline-rail" aria-hidden="true" />
+      {/* ============================================================ */}
+      {/*  PARALLAX DIVIDER                                             */}
+      {/* ============================================================ */}
+      <div className="parallax-divider" aria-hidden="true">
+        <div
+          style={{
+            backgroundImage: "url('/media/roses.webp')",
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '100%',
+            height: '100%',
+          }}
+        />
+        <div className="parallax-overlay" />
+      </div>
 
-          <Reveal as="div" delay={120} className="timeline-item">
-            <span className="timeline-num">01</span>
-            <div>
-              <h3>Where we met</h3>
-              <p>
-                A mutual friend&rsquo;s dinner table, a long conversation that
-                should have ended an hour earlier, and neither of us in a hurry to leave.
-              </p>
-            </div>
+      {/* ============================================================ */}
+      {/*  COUNTDOWN                                                    */}
+      {/* ============================================================ */}
+      <section id="countdown" style={{
+        background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
+        padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        textAlign: 'center',
+      }}>
+        <section style={{
+          fontFamily: 'Georgia, serif',
+          fontStyle: 'italic',
+          fontSize: '14px',
+          color: '#fbf7f2',
+          lineHeight: 1,
+        }}>
+          <Reveal as="h2" delay={80}>
+            After all this time — always
           </Reveal>
+          <br />
+        </section>
 
-          <Reveal as="div" delay={200} className="timeline-item">
-            <span className="timeline-num">02</span>
-            <div>
-              <h3>The proposal</h3>
-              <p>
-                A quiet evening, a question that wasn&rsquo;t really a surprise,
-                and an answer that was never really in doubt.
-              </p>
-            </div>
-          </Reveal>
-
-          <Reveal as="div" delay={280} className="timeline-item">
-            <span className="timeline-num">03</span>
-            <div>
-              <h3>Today</h3>
-              <p>
-                We&rsquo;re bringing together the people who shaped our story
-                so far, to celebrate the next part of it with us.
-              </p>
-            </div>
-          </Reveal>
-        </div>
+        <Reveal delay={160}>
+          <CountdownTimer />
+        </Reveal>
       </section>
 
       {/* ============================================================ */}
@@ -224,28 +570,38 @@ export default function ContentPage() {
           Join us
         </Reveal>
 
-        <div className="location-grid">
-          <Reveal as="div" delay={140} className="location-card">
-            <h3>Ceremony</h3>
-            <p className="location-time">6:00 in the evening</p>
-            <p className="location-venue">The Garden Pavilion</p>
-            <p className="location-address">Giza, Egypt</p>
-          </Reveal>
+        <Reveal delay={100}>
+          <p style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontStyle: 'italic',
+            fontSize: 'clamp(20px, 3vw, 26px)',
+            color: '#fbf7f2',
+            margin: '0 0 6px',
+            textAlign: 'center',
+          }}>
+            Waldorf Astoria
+          </p>
+          <p style={{
+            fontFamily: "'Arial', sans-serif",
+            fontSize: '12px',
+            letterSpacing: '0.12em',
+            color: 'rgba(251,247,242,0.55)',
+            textAlign: 'center',
+            margin: '0 0 40px',
+          }}>
+            Cairo, Egypt
+          </p>
+        </Reveal>
 
-          <Reveal as="div" delay={220} className="location-card">
-            <h3>Reception</h3>
-            <p className="location-time">8:00 in the evening</p>
-            <p className="location-venue">The Garden Pavilion</p>
-            <p className="location-address">Same address — follow the signs</p>
-          </Reveal>
-        </div>
+
 
         <Reveal delay={300}>
           <a
-            href="https://maps.google.com/?q=Giza,Egypt"
+            href="https://maps.app.goo.gl/mrD65feFV6JFv5hL8"
             target="_blank"
             rel="noopener noreferrer"
             className="gold-button"
+            style={{ marginTop: '8px' }}
           >
             Get directions
           </a>
@@ -253,8 +609,97 @@ export default function ContentPage() {
       </section>
 
       {/* ============================================================ */}
-      {/*  DETAILS                                                      */}
+      {/*  WEDDING TIMELINE                                             */}
       {/* ============================================================ */}
+      <section id="timeline" className="story-section">
+        <Reveal as="p" className="eyebrow">the evening</Reveal>
+        <Reveal as="h2" delay={80} className="section-title">
+          How the night unfolds
+        </Reveal>
+
+        <div className="timeline">
+          <div className="timeline-rail" aria-hidden="true" />
+
+          {[
+            { num: '01', time: '8:00 pm', event: 'Guest arrival', desc: 'Welcome drinks and the first moments of a night to remember.' },
+            { num: '02', time: '8:30 pm', event: 'Bride & groom entrance', desc: 'The moment we have all been waiting for.' },
+            { num: '03', time: '11:00 pm', event: 'Dinner', desc: 'A feast shared with the people we love most.' },
+            { num: '04', time: '1:00 am', event: 'Jirtig', desc: 'A cherished tradition — joyful, loud, and full of love.' },
+            { num: '05', time: '1:00 am~', event: 'After party', desc: 'Keep the night going for those who never want it to end.' },
+          ].map(({ num, time, event, desc }, i) => (
+            <Reveal key={num} as="div" delay={120 + i * 80} className="timeline-item">
+              <span className="timeline-num">{num}</span>
+              <div>
+                <h3>{event}</h3>
+                <p style={{ marginBottom: '4px' }}>{desc}</p>
+                <p style={{
+                  fontFamily: 'Georgia, serif',
+                  fontStyle: 'italic',
+                  fontSize: '13px',
+                  color: '#b8782a',
+                  margin: 0,
+                }}>
+                  {time}
+                </p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+      </section>
+
+     {/* ============================================================ */}
+      {/*  PARALLAX DIVIDER                                             */}
+      {/* ============================================================ */}
+      <div className="parallax-divider" aria-hidden="true">
+        <div
+          style={{
+            backgroundImage: "url('/media/roses.webp')",
+            backgroundAttachment: 'fixed',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            width: '100%',
+            height: '100%',
+          }}
+        />
+        <div className="parallax-overlay" />
+      </div>
+
+
+
+      {/* ============================================================ */}
+      {/*  GUEST MESSAGES                                               */}
+      {/* ============================================================ */}
+      <section id="messages" style={{
+        background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)',
+        padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}>
+
+        <Reveal delay={80}>
+          <p style={{
+            fontFamily: "Georgia, 'Times New Roman', serif",
+            fontStyle: 'italic',
+            fontSize: 'clamp(20px, 3vw, 26px)',
+            color: '#fbf7f2',
+            margin: '0 0 6px',
+            textAlign: 'center',
+          }}>
+          Leave us a loving message or your best marriage advice — help us remember this special day forever.
+          </p>
+          <br></br>
+          </Reveal>
+    
+      
+        <Reveal delay={160} style={{ width: '100%', maxWidth: '600px' }}>
+          <GuestBook />
+        </Reveal>
+      </section>
+
+      {/*  
+      
       <section id="details" className="details-section">
         <Reveal as="p" className="eyebrow">the details</Reveal>
         <Reveal as="h2" delay={80} className="section-title">
@@ -274,311 +719,10 @@ export default function ContentPage() {
             <p className="swatch-caption">Please avoid pure white.</p>
           </Reveal>
 
-          <Reveal as="div" delay={220} className="details-card">
-            <h3>Schedule</h3>
-            <ul className="schedule-list">
-              <li><span>5:30 pm</span>Guest arrival</li>
-              <li><span>6:00 pm</span>Ceremony</li>
-              <li><span>8:00 pm</span>Reception & dinner</li>
-              <li><span>11:00 pm</span>Last dance</li>
-            </ul>
-          </Reveal>
-
-          <Reveal as="div" delay={300} className="details-card">
-            <h3>Gifts</h3>
-            <p>
-              Your presence at our wedding is the only gift we&rsquo;re hoping for.
-              For those who&rsquo;d still like to give something, a small honeymoon
-              fund will be available on the RSVP page.
-            </p>
-          </Reveal>
+        
         </div>
-      </section>
+      </section> */}
 
-
-
-      <style jsx>{`
-        main {
-          background: #fbf7f2;
-        }
-
-        /* ---------- Hero ---------- */
-        .hero {
-          position: relative;
-          overflow: hidden;
-        }
-
-        /* ---------- Shared section rhythm ---------- */
-        .eyebrow {
-          font-family: 'Arial', sans-serif;
-          font-size: 12px;
-          letter-spacing: 0.28em;
-          text-transform: uppercase;
-          color: #b8782a;
-          text-align: center;
-          margin: 0 0 12px;
-        }
-        .eyebrow-light {
-          color: #ffcf6b;
-        }
-        .section-title {
-          font-family: Georgia, 'Times New Roman', serif;
-          font-style: italic;
-          font-weight: 500;
-          font-size: clamp(28px, 5vw, 44px);
-          color: #2f1810;
-          text-align: center;
-          margin: 0 auto clamp(40px, 7vh, 72px);
-          max-width: 20ch;
-        }
-        .section-title-light {
-          color: #fbf7f2;
-        }
-
-        /* ---------- Story ---------- */
-        .story-section {
-          padding: clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px);
-          max-width: 880px;
-          margin: 0 auto;
-        }
-        .timeline {
-          position: relative;
-          display: flex;
-          flex-direction: column;
-          gap: clamp(36px, 6vh, 56px);
-          padding-left: clamp(36px, 6vw, 56px);
-        }
-        .timeline-rail {
-          position: absolute;
-          left: 14px;
-          top: 6px;
-          bottom: 6px;
-          width: 1px;
-          background: linear-gradient(
-            to bottom,
-            rgba(184, 120, 42, 0.05),
-            rgba(184, 120, 42, 0.45),
-            rgba(184, 120, 42, 0.05)
-          );
-        }
-        .timeline-item {
-          position: relative;
-          display: flex;
-          gap: 20px;
-          align-items: flex-start;
-        }
-        .timeline-num {
-          position: absolute;
-          left: calc(-1 * clamp(36px, 6vw, 56px));
-          top: -4px;
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          background: #fbf7f2;
-          border: 1px solid rgba(184, 120, 42, 0.5);
-          color: #b8782a;
-          font-family: Georgia, serif;
-          font-size: 12px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .timeline-item h3 {
-          font-family: Georgia, 'Times New Roman', serif;
-          font-style: italic;
-          font-size: clamp(19px, 2.6vw, 23px);
-          color: #2f1810;
-          margin: 0 0 8px;
-        }
-        .timeline-item p {
-          font-size: 15px;
-          line-height: 1.75;
-          color: #5a4030;
-          margin: 0;
-          max-width: 56ch;
-        }
-
-        /* ---------- Parallax divider ---------- */
-        .parallax-divider {
-          position: relative;
-          width: 100%;
-          height: clamp(220px, 32vh, 360px);
-          overflow: hidden;
-        }
-        .parallax-overlay {
-          position: absolute;
-          inset: 0;
-          background: rgba(77, 14, 18, 0.55);
-        }
-
-        /* ---------- Location ---------- */
-        .location-section {
-          background: radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%);
-          padding: clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px);
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-        }
-        .location-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-          gap: 20px;
-          width: 100%;
-          max-width: 640px;
-          margin-bottom: clamp(36px, 6vh, 56px);
-        }
-        .location-card {
-          background: rgba(251, 247, 242, 0.06);
-          border: 1px solid rgba(255, 207, 107, 0.25);
-          border-radius: 4px;
-          padding: 28px 24px;
-          text-align: center;
-        }
-        .location-card h3 {
-          font-family: 'Arial', sans-serif;
-          font-size: 11px;
-          letter-spacing: 0.22em;
-          text-transform: uppercase;
-          color: #ffcf6b;
-          margin: 0 0 14px;
-        }
-        .location-time {
-          font-family: Georgia, serif;
-          font-style: italic;
-          font-size: 20px;
-          color: #fbf7f2;
-          margin: 0 0 6px;
-        }
-        .location-venue {
-          font-size: 14px;
-          color: #f0d9ce;
-          margin: 0;
-        }
-        .location-address {
-          font-size: 12.5px;
-          color: rgba(240, 217, 206, 0.7);
-          margin: 4px 0 0;
-        }
-        .gold-button {
-          font-family: 'Arial', sans-serif;
-          font-size: 13px;
-          letter-spacing: 0.18em;
-          text-transform: uppercase;
-          color: #4d0e12;
-          background: #ffcf6b;
-          border: none;
-          border-radius: 999px;
-          padding: 14px 40px;
-          text-decoration: none;
-          display: inline-block;
-          transition: transform 0.25s ease, background 0.25s ease;
-        }
-        .gold-button:hover {
-          background: #ffd87f;
-          transform: translateY(-1px);
-        }
-
-        /* ---------- Details ---------- */
-        .details-section {
-          padding: clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px);
-          max-width: 1020px;
-          margin: 0 auto;
-        }
-        .details-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-          gap: 24px;
-        }
-        .details-card {
-          background: #ffffff;
-          border: 1px solid rgba(184, 120, 42, 0.18);
-          border-radius: 4px;
-          padding: 32px 28px;
-        }
-        .details-card h3 {
-          font-family: Georgia, 'Times New Roman', serif;
-          font-style: italic;
-          font-size: 20px;
-          color: #2f1810;
-          margin: 0 0 14px;
-        }
-        .details-card p {
-          font-size: 14.5px;
-          line-height: 1.7;
-          color: #5a4030;
-          margin: 0 0 14px;
-        }
-        .swatches {
-          display: flex;
-          gap: 10px;
-          margin-bottom: 10px;
-        }
-        .swatch {
-          width: 30px;
-          height: 30px;
-          border-radius: 50%;
-          border: 1px solid rgba(0, 0, 0, 0.08);
-          display: inline-block;
-        }
-        .swatch-caption {
-          font-size: 12.5px;
-          color: #8a6c5a;
-          margin: 0;
-        }
-        .schedule-list {
-          list-style: none;
-          margin: 0;
-          padding: 0;
-        }
-        .schedule-list li {
-          display: flex;
-          gap: 14px;
-          font-size: 14.5px;
-          color: #5a4030;
-          padding: 9px 0;
-          border-bottom: 1px solid rgba(184, 120, 42, 0.12);
-        }
-        .schedule-list li:last-child {
-          border-bottom: none;
-        }
-        .schedule-list span {
-          font-family: Georgia, serif;
-          font-style: italic;
-          color: #b8782a;
-          min-width: 64px;
-        }
-
-        /* ---------- Footer ---------- */
-        .site-footer {
-          background: #4d0e12;
-          padding: clamp(48px, 9vh, 88px) 24px;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          text-align: center;
-        }
-        .footer-seal {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 56px;
-          height: 56px;
-          border-radius: 50%;
-          border: 1px solid rgba(255, 207, 107, 0.5);
-          color: #ffcf6b;
-          font-family: Georgia, serif;
-          font-style: italic;
-          font-size: 16px;
-          margin: 0 auto 16px;
-        }
-        .footer-line {
-          font-family: Georgia, serif;
-          font-style: italic;
-          font-size: 15px;
-          color: rgba(251, 247, 242, 0.75);
-          margin: 0;
-        }
-      `}</style>
     </main>
   );
 }
