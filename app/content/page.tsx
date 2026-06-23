@@ -654,10 +654,8 @@ export default function ContentPage() {
         perseverance over ease, and selflessness over certainty. It is in taking the
         longer road, through every trial and every season of waiting, that the heart
         is refined and the soul finds its way home.
-        <br /><br />
         Through every hurdle, every whispered prayer, and every moment spent holding
         on to hope, our hearts found their way back to one another.
-        <br /><br />
         And now, at last, surrounded by our family, friends, and countless blessings,
         we invite you to share in the joy as we celebrate the beginning of our forever.
       </p>
