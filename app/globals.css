@@ -178,3 +178,15 @@ button {
   outline: 2px solid #ffffff;
   outline-offset: 3px;
 }
+
+
+
+html, body {
+  height: -webkit-fill-available;
+}
+
+.full-screen {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  min-height: 100dvh;
+}

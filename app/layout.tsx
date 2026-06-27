@@ -2,7 +2,6 @@ import type { Metadata, Viewport } from 'next';
 import { Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 
-/* Elegant serif font well-suited to a romantic / invitation-style experience */
 const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
@@ -13,12 +12,9 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: 'A Little Surprise',
   description: 'An invitation, just for you.',
-  // Prevents search engines from indexing what is meant to be a private/personal page
   robots: { index: false, follow: false },
 };
 
-/* Locks the viewport so the experience always feels "full-screen" and
-   prevents pinch-zoom from breaking the intentional full-bleed layouts */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -34,6 +30,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={cormorant.variable}>
+      <head>
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+      </head>
       <body>
         {children}
       </body>

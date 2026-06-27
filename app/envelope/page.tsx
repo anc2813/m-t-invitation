@@ -64,8 +64,8 @@ export default function EnvelopePage() {
         className="absolute-fill"
         src="/media/0623.mp4"
         playsInline
+        muted
         preload="auto"
-        muted={true}
         controls={false}
         onEnded={handleEnded}
         onCanPlay={() => setIsReady(true)}
@@ -74,6 +74,7 @@ export default function EnvelopePage() {
           height: '100dvh',
           objectFit: 'cover',
           objectPosition: 'center',
+          WebkitTransform: 'translateZ(0)',
         }}
       >
         Your browser does not support the video tag.
@@ -110,7 +111,7 @@ export default function EnvelopePage() {
         />
       )}
 
-      {/* ← Transition overlay — must be INSIDE return/main */}
+      {/* Transition overlay */}
       <div
         style={{
           position: 'fixed',
