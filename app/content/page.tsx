@@ -233,21 +233,7 @@ function GuestBook() {
         {loading ? 'Sending...' : submitted ? 'Message sent ✓' : 'Leave your message'}
       </button>
 
-      {messages.length > 0 && (
-        <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div style={{ width: '40px', height: '1px', background: 'rgba(255,207,107,0.3)', margin: '0 auto 8px' }} />
-          {messages.map((m) => (
-            <div key={m.id} style={{ background: 'rgba(251,247,242,0.06)', border: '1px solid rgba(255,207,107,0.18)', borderRadius: '4px', padding: '20px 24px' }}>
-              <p style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', fontSize: '15px', color: '#fbf7f2', lineHeight: 1.7, margin: '0 0 10px' }}>
-                &ldquo;{m.message}&rdquo;
-              </p>
-              <p style={{ fontFamily: "'Arial', sans-serif", fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#ffcf6b', margin: 0 }}>
-                {m.name} · {new Date(m.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+
     </div>
   );
 }
