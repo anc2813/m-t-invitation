@@ -1,4 +1,5 @@
 'use client';
+import { supabase } from '@/lib/supabase';
 import "./content.css"
 import Image from 'next/image';
 import {
@@ -140,20 +141,44 @@ function GuestBook() {
   const [name, setName] = useState('');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [messages, setMessages] = useState<{ name: string; message: string; time: string }[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [messages, setMessages] = useState<{
+    id: string;
+    name: string;
+    message: string;
+    created_at: string;
+  }[]>([]);
 
-  function handleSubmit() {
+  // Load all messages on mount
+  useEffect(() => {
+    async function load() {
+      const { data, error } = await supabase
+        .from('messages')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (!error && data) setMessages(data);
+    }
+    load();
+  }, []);
+
+  async function handleSubmit() {
     if (!name.trim() || !message.trim()) return;
-    const entry = {
-      name: name.trim(),
-      message: message.trim(),
-      time: new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
-    };
-    setMessages(prev => [entry, ...prev]);
-    setName('');
-    setMessage('');
-    setSubmitted(true);
-    setTimeout(() => setSubmitted(false), 3000);
+    setLoading(true);
+
+    const { data, error } = await supabase
+      .from('messages')
+      .insert([{ name: name.trim(), message: message.trim() }])
+      .select()
+      .single();
+
+    if (!error && data) {
+      setMessages(prev => [data, ...prev]);
+      setName('');
+      setMessage('');
+      setSubmitted(true);
+      setTimeout(() => setSubmitted(false), 3000);
+    }
+    setLoading(false);
   }
 
   const inputStyle: CSSProperties = {
@@ -188,6 +213,7 @@ function GuestBook() {
       />
       <button
         onClick={handleSubmit}
+        disabled={loading}
         style={{
           fontFamily: "'Arial', sans-serif",
           fontSize: '12px',
@@ -198,24 +224,25 @@ function GuestBook() {
           border: 'none',
           borderRadius: '999px',
           padding: '14px 40px',
-          cursor: 'pointer',
+          cursor: loading ? 'not-allowed' : 'pointer',
+          opacity: loading ? 0.7 : 1,
           alignSelf: 'center',
           transition: 'background 0.3s ease',
         }}
       >
-        {submitted ? 'Message sent ✓' : 'Leave your message'}
+        {loading ? 'Sending...' : submitted ? 'Message sent ✓' : 'Leave your message'}
       </button>
 
       {messages.length > 0 && (
         <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div style={{ width: '40px', height: '1px', background: 'rgba(255,207,107,0.3)', margin: '0 auto 8px' }} />
-          {messages.map((m, i) => (
-            <div key={i} style={{ background: 'rgba(251,247,242,0.06)', border: '1px solid rgba(255,207,107,0.18)', borderRadius: '4px', padding: '20px 24px' }}>
+          {messages.map((m) => (
+            <div key={m.id} style={{ background: 'rgba(251,247,242,0.06)', border: '1px solid rgba(255,207,107,0.18)', borderRadius: '4px', padding: '20px 24px' }}>
               <p style={{ fontFamily: "Georgia, 'Times New Roman', serif", fontStyle: 'italic', fontSize: '15px', color: '#fbf7f2', lineHeight: 1.7, margin: '0 0 10px' }}>
                 &ldquo;{m.message}&rdquo;
               </p>
               <p style={{ fontFamily: "'Arial', sans-serif", fontSize: '11px', letterSpacing: '0.15em', textTransform: 'uppercase', color: '#ffcf6b', margin: 0 }}>
-                {m.name} · {m.time}
+                {m.name} · {new Date(m.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}
               </p>
             </div>
           ))}
@@ -224,7 +251,6 @@ function GuestBook() {
     </div>
   );
 }
-
 /* ------------------------------------------------------------------ */
 /*  PetalGame                                                          */
 /* ------------------------------------------------------------------ */
@@ -548,25 +574,8 @@ export default function ContentPage() {
         </div>
       </section>
 
-      {/* ============================================================ */}
-      {/*  PETAL GAME                                                   */}
-      {/* ============================================================ */}
-      <section id="game" style={{ background: 'radial-gradient(ellipse at 50% 0%, #883f48 0%, #4d0e12 72%)', padding: 'clamp(64px, 12vh, 120px) clamp(20px, 6vw, 48px)', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Reveal as="p" className="eyebrow eyebrow-light">a little fun</Reveal>
-        <Reveal as="h2" delay={80} className="section-title section-title-light">Shower them with love</Reveal>
-        <Reveal delay={140} style={{ width: '100%', maxWidth: '420px' }}>
-          <PetalGame />
-        </Reveal>
-      </section>
 
-      {/* ============================================================ */}
-      {/*  FOOTER                                                       */}
-      {/* ============================================================ */}
-      <footer className="site-footer">
-        <div className="footer-seal">M</div>
-        <p className="footer-line">Mohamed &amp; Tibyan — 04 · 07 · 2026</p>
-      </footer>
-
+  
     </main>
   );
 }
